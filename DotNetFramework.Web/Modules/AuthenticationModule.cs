@@ -17,12 +17,19 @@ namespace DotNetFramework.Web.Modules
         public void Init(HttpApplication context)
         {
             context.AuthenticateRequest += new EventHandler(this.Application_AuthenticateRequest);
-            context.EndRequest += new EventHandler(this.Application_EndRequest); ;
+            context.EndRequest += new EventHandler(this.Application_EndRequest);
+        }
+        public void Dispose()
+        {
+         
         }
 
         private void Application_AuthenticateRequest(object sender, EventArgs e)
         {
-            var request = HttpContext.Current.Request;
+            HttpContext context = ((HttpApplication)sender).Context;
+
+            var request = context.Request;
+
             var authHeader = request.Headers["Authorization"];
             if (authHeader != null)
             {
@@ -57,18 +64,15 @@ namespace DotNetFramework.Web.Modules
                 response.Headers.Add("WWW-Authenticate", $"Basic Realm = {Realm}");
             }
         }
-        public void Dispose()
-        {
 
-        }
         private GenericPrincipal AuthenticateUser(string credentials)
         {
             var encoding = System.Text.Encoding.GetEncoding("iso-8859-1");
             var cred = encoding.GetString(Convert.FromBase64String(credentials));
-            int separator = cred.IndexOf(':');
+            int separator = cred.IndexOf(':'); // demo:demo
             string name = cred.Substring(0, separator);
             string password = cred.Substring(separator + 1);
-            //Authentication logic from DB here
+            //Authentication logic here
             if (password == "demo")
             {
                 var identity = new GenericIdentity(name);

@@ -10,6 +10,8 @@ using Domain.DotNetCore.Models;
 using ApplicationServices.DotNetCore.Handlers;
 using ApplicationServices.DotNetCore.Models;
 
+using DotNetCore.API.Filters;
+
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DotNetCore.API.Controllers
@@ -18,17 +20,18 @@ namespace DotNetCore.API.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private readonly IHandlesAsync<DefaultQuery, DefaultResponse> _defaultHandler;
+        private readonly IHandlesAsync<AuthenticationQuery, AuthenticationResponse> _defaultHandler;
 
-        public HomeController(IHandlesAsync<DefaultQuery, DefaultResponse> defaultHandler)
+        public HomeController(IHandlesAsync<AuthenticationQuery, AuthenticationResponse> defaultHandler)
         {
             _defaultHandler = defaultHandler;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MyMethod()
+        [HttpGet]
+        [ServiceFilter(typeof(MySampleActionFilter))]
+        public string Get()
         {
-
+            return $"Hello from Home Controller";
         }
     }
 }

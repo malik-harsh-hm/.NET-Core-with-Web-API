@@ -6,8 +6,8 @@ using Domain.DotNetCore.Models;
 
 namespace Domain.DotNetCore.Repositories
 {
-    public interface IDefaultRepository
+    public interface IUserRepository
     {
-        Task<DefaultModel_Domain> GetDefaultText(string text);
+        Task<UserModel_Domain> GetUser(string id, string pwd);
     }
 }

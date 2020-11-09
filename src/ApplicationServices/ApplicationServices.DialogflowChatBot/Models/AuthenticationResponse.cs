@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ApplicationServices.DotNetCore.Models
 {
-    public class DefaultResponse
+    public class AuthenticationResponse
     {
-        public string Text { get; set; }
+        public bool isAuthenticated { get; set; }
     }
 }

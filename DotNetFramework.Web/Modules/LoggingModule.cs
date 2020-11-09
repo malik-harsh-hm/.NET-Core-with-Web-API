@@ -10,24 +10,16 @@ namespace DotNetFramework.Web.Modules
     {
         public void Init(HttpApplication context)
         {
-            context.BeginRequest += Application_OnBeginRequest;
-            context.EndRequest += Application_OnEndRequest;
+            context.PreRequestHandlerExecute += Application_OnPreRequestHandlerExecute;
+            context.EndRequest += Application_OnPostRequestHandlerExecute;
         }
-        private void Application_OnBeginRequest(object sender, EventArgs e)
+        private void Application_OnPreRequestHandlerExecute(object sender, EventArgs e)
         {
             var source = (HttpApplication)sender;
-            var startTime = DateTime.Now;
-            Debug.WriteLine($"Starting request timer at " +
-                $"{startTime} for request " +
-                $"{source.Request.Url}");
         }
-        private void Application_OnEndRequest(object sender, EventArgs e)
+        private void Application_OnPostRequestHandlerExecute(object sender, EventArgs e)
         {
             var source = (HttpApplication)sender;
-            var stopTime = DateTime.Now;
-            Debug.WriteLine($"Stopping request timer at " +
-                $"{stopTime} for request " +
-                $"{source.Request.Url}");
         }
         public void Dispose()
         {

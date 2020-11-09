@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,16 +6,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ApplicationServices.DotNetCore.Handlers;
 using ApplicationServices.DotNetCore.Models;
-using DotNetCore.API.Configs;
 using Domain.DotNetCore.Models;
 using Domain.DotNetCore.Repositories;
 using Infrastructure.DotNetCore.Repositories;
 using Microsoft.Extensions.Configuration;
+using DotNetCore.API.Middleware;
+using DotNetCore.API.Services;
+using DotNetCore.API.Filters;
 
 namespace DotNetCore.API
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -32,22 +36,20 @@ namespace DotNetCore.API
 #endif
                 .Build();
 
-            
+
             AddServices(services);
+            //ConfigureScopeTestServices(services);
             services.AddMvc();
             services.AddRouting(options => options.LowercaseUrls = true);
-
-            var twilioConfig = new TwilioConfig();
-            config.GetSection("TwilioConfig").Bind(twilioConfig);
-            services.AddSingleton(twilioConfig);
 
         }
 
         private void AddServices(IServiceCollection services)
         {
 
-            services.AddTransient<IHandlesAsync<DefaultQuery, DefaultResponse>, DefaultHandler>();
-            services.AddTransient<IDefaultRepository, DefaultRepository>();
+            services.AddScoped<IHandlesAsync<AuthenticationQuery, AuthenticationResponse>, AuthenticationHandler>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<MySampleActionFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,12 +59,85 @@ namespace DotNetCore.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthenticationMiddleware();
+
+            // Create branch to the MyHandlerMiddleware. 
+            // All requests ending in .report will follow this branch.
+            app.MapWhen(
+                context => context.Request.Path.ToString().EndsWith(".report"),
+                appBranch =>
+                {
+                    // ... optionally add more middleware to this branch
+                    appBranch.UseMyHandler();
+                });
+
+            // Middleware with Params
+            var myMiddlewareOptions = Configuration.GetSection("MyMiddlewareOptionsSection").Get<MyMiddlewareOptions>();
+            app.UseMyMiddlewareWithParams(myMiddlewareOptions);
+
             app.UseMvcWithDefaultRoute();
+
+            app.Use(async (context, next) =>
+            {
+                // Do work that doesn't write to the Response.
+                await next.Invoke();
+                // Do logging or other work that doesn't write to the Response.
+            });
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                var started = context.Response.HasStarted;
+                await context.Response.WriteAsync("Hello from .Net Core!");
             });
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Will not be executed");
+            });
+        }
+
+        public void ConfigureScopeTestServices(IServiceCollection services)
+        {
+            //services.AddSingleton<ParentService1>();
+            //services.AddSingleton<ParentService2>();
+            //services.AddSingleton<ChildService>();
+
+            //services.AddTransient<ParentService1>();
+            //services.AddTransient<ParentService2>();
+            //services.AddTransient<ChildService>();
+
+            //services.AddScoped<ParentService1>();
+            //services.AddScoped<ParentService2>();
+            //services.AddScoped<ChildService>();
+
+            //------------------------------------------------Mix Cases--------------------------------------------
+
+            // ----------------Mix case 1 - Scoped inside a Singleton
+
+            //won't work -  Cannot consume scoped service 'EmployeeManagement.Services.ChildService' from singleton 'EmployeeManagement.Services.ParentService1'.
+            //services.AddSingleton<ParentService1>();
+            //services.AddSingleton<ParentService2>();
+            //services.AddScoped<ChildService>();
+
+            //solution - make parents as scoped or transient
+            //services.AddTransient<ParentService1>();
+            //services.AddTransient<ParentService2>();
+            //services.AddScoped<ChildService>();
+
+            // -----------------Mix case 2 - Transient inside a Singleton
+
+            // Below runs but always will have 2 child instances
+            //services.AddSingleton<ParentService1>();
+            //services.AddSingleton<ParentService2>();
+            //services.AddTransient<ChildService>();
+
+
+            // -----------------Mix case 3 - Singleton inside a Scoped
+
+            //will work
+            //services.AddScoped<ParentService1>();
+            //services.AddScoped<ParentService2>();
+            //services.AddSingleton<ChildService>();
+
         }
     }
 }

@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.DotNetCore.Repositories
 {
-    public class DefaultRepository : IDefaultRepository
+    public class UserRepository : IUserRepository
     {
-        public async Task<DefaultModel_Domain> GetDefaultText(string text)
+        public async Task<UserModel_Domain> GetUser(string id, string pwd)
         {
-            DefaultModel_Domain result = new DefaultModel_Domain();
+            UserModel_Domain result = new UserModel_Domain();
 
-            result.text = "Default_" + text;
+            result.isAuthenticated = (id == "demo" && pwd == "demo");
 
             return await Task.FromResult(result);
         }
