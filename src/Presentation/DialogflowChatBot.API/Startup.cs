@@ -36,7 +36,6 @@ namespace DotNetCore.API
 #endif
                 .Build();
 
-
             AddServices(services);
             //ConfigureScopeTestServices(services);
             services.AddMvc();
