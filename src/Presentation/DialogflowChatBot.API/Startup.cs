@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using DotNetCore.API.Middleware;
 using DotNetCore.API.Services;
 using DotNetCore.API.Filters;
+using System.Diagnostics;
 
 namespace DotNetCore.API
 {
@@ -58,6 +59,9 @@ namespace DotNetCore.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+           // app.UseStaticFiles();
+
             app.UseAuthenticationMiddleware();
 
             // Create branch to the MyHandlerMiddleware. 
