@@ -14,6 +14,7 @@ using DotNetCore.API.Middleware;
 using DotNetCore.API.Services;
 using DotNetCore.API.Filters;
 using System.Diagnostics;
+using System;
 
 namespace DotNetCore.API
 {
@@ -46,11 +47,16 @@ namespace DotNetCore.API
 
         private void AddServices(IServiceCollection services)
         {
-
             services.AddScoped<IHandlesAsync<AuthenticationQuery, AuthenticationResponse>, AuthenticationHandler>();
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<MySampleActionFilter>();
+
+            services.AddScoped<IHandlesAsync<EmployeeQuery, EmployeeResponse>, EmployeeHandler>();
+            services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -60,41 +66,12 @@ namespace DotNetCore.API
                 app.UseDeveloperExceptionPage();
             }
 
-           // app.UseStaticFiles();
-
-            app.UseAuthenticationMiddleware();
-
-            // Create branch to the MyHandlerMiddleware. 
-            // All requests ending in .report will follow this branch.
-            app.MapWhen(
-                context => context.Request.Path.ToString().EndsWith(".report"),
-                appBranch =>
-                {
-                    // ... optionally add more middleware to this branch
-                    appBranch.UseMyHandler();
-                });
-
-            // Middleware with Params
-            var myMiddlewareOptions = Configuration.GetSection("MyMiddlewareOptionsSection").Get<MyMiddlewareOptions>();
-            app.UseMyMiddlewareWithParams(myMiddlewareOptions);
-
             app.UseMvcWithDefaultRoute();
-
-            app.Use(async (context, next) =>
-            {
-                // Do work that doesn't write to the Response.
-                await next.Invoke();
-                // Do logging or other work that doesn't write to the Response.
-            });
 
             app.Run(async (context) =>
             {
                 var started = context.Response.HasStarted;
                 await context.Response.WriteAsync("Hello from .Net Core!");
-            });
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Will not be executed");
             });
         }
 
@@ -129,8 +106,8 @@ namespace DotNetCore.API
             // -----------------Mix case 2 - Transient inside a Singleton
 
             // Below runs but always will have 2 child instances
-            //services.AddSingleton<ParentService1>();
-            //services.AddSingleton<ParentService2>();
+            //services.AddScoped<ParentService1>();
+            //services.AddScoped<ParentService2>();
             //services.AddTransient<ChildService>();
 
 

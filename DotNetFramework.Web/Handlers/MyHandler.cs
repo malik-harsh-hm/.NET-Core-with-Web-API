@@ -20,8 +20,6 @@ namespace DotNetFramework.Web.Handlers
                 context.Response.Output.Write(response);
             }
 
-            // ...
-
             private string GenerateResponse(HttpContext context)
             {
                 string title = context.Request.QueryString["title"];

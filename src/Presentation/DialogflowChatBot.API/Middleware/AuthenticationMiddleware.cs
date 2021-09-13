@@ -24,7 +24,7 @@ namespace DotNetCore.API.Middleware
         public AuthenticationMiddleware(RequestDelegate next)//, IHandlesAsync<AuthenticationQuery, AuthenticationResponse> authenticationHandler)
         {
             _next = next;
-            // _authenticationHandler = authenticationHandler;
+            //_authenticationHandler = authenticationHandler;
         }
         // Middleware is always a singleton so you can't have scoped dependencies as constructor dependencies in the constructor of your middleware. 
         // Middleware supports method injection on the Invoke method,
@@ -78,22 +78,12 @@ namespace DotNetCore.API.Middleware
             string password = cred.Substring(separator + 1);
             //Authentication logic here
 
-            //if (CheckPassword(name, password))
-            //{
-            //    var identity = new GenericIdentity(name);
-            //    return new GenericPrincipal(identity, null);
-            //}
-
             if (CheckPassword2(name, password).GetAwaiter().GetResult().isAuthenticated)
             {
                 var identity = new GenericIdentity(name);
                 return new GenericPrincipal(identity, null);
             }
             return null;
-        }
-        private bool  CheckPassword(string username, string password)
-        {
-            return (password == "demo");
         }
         private async Task<AuthenticationResponse> CheckPassword2(string username, string password)
         {

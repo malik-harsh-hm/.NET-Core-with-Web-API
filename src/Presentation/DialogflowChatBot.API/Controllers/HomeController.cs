@@ -11,12 +11,14 @@ using ApplicationServices.DotNetCore.Handlers;
 using ApplicationServices.DotNetCore.Models;
 
 using DotNetCore.API.Filters;
+using System.Web.Http;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DotNetCore.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
     {
@@ -27,11 +29,55 @@ namespace DotNetCore.API.Controllers
             _defaultHandler = defaultHandler;
         }
 
-        [HttpGet]
-        [ServiceFilter(typeof(MySampleActionFilter))]
-        public string Get()
+        [System.Web.Http.HttpGet]
+        public async Task<string> Get()
         {
-            return $"Hello from Home Controller";
+
+            var result =  await ProcessCommBankPayment();
+
+            if (result != null && result == "success")
+            {
+                return "Success";
+            }
+            else
+            {
+                return "Fail";
+            }
+
+        }
+
+        private async Task<string> ProcessCommBankPayment()
+        {
+            bool success = false;
+
+            try
+            {
+                await Task.Factory.StartNew(async() =>
+                {
+                    try
+                    {
+                        await Task.Delay(5000);
+                        success = false;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    if (!success)
+                    {
+                        throw new Exception("Retry");
+                    }
+
+                });
+            }
+            catch (Exception)
+            {
+            }
+            if (success)
+            {
+                return "success";
+            }  
+            else
+                return "fail";
         }
     }
 }
