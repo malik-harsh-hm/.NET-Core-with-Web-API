@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFramework.Web", "DotN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationServices.AzureFunctionApp", "ApplicationServices.AzureFunctionApp\ApplicationServices.AzureFunctionApp.csproj", "{5DFF3D7A-B675-4742-A291-63863D328A94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetCore.New.API", "DotNetCore.New.API\DotNetCore.New.API.csproj", "{01D0375B-678E-4F0E-B02A-F539B5FBD2DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{5DFF3D7A-B675-4742-A291-63863D328A94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DFF3D7A-B675-4742-A291-63863D328A94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DFF3D7A-B675-4742-A291-63863D328A94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01D0375B-678E-4F0E-B02A-F539B5FBD2DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D0375B-678E-4F0E-B02A-F539B5FBD2DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D0375B-678E-4F0E-B02A-F539B5FBD2DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D0375B-678E-4F0E-B02A-F539B5FBD2DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{1EC459FC-7364-4582-B013-8E18E8E146A4} = {5047FCFA-B3E7-4266-AE47-E7119E29078E}
 		{7B02D780-9A36-4DBE-8558-33C19AD70194} = {E5B958C5-48DC-4ABF-A6E4-A56A931C0C58}
 		{5DFF3D7A-B675-4742-A291-63863D328A94} = {3E58D6F9-3DE5-49B5-BCB6-E1911E706B12}
+		{01D0375B-678E-4F0E-B02A-F539B5FBD2DB} = {E5B958C5-48DC-4ABF-A6E4-A56A931C0C58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F7F1588-068D-4D5C-8A3C-D784690C21E2}

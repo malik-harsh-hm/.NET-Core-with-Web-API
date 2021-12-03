@@ -39,7 +39,7 @@ namespace DotNetCore.API
                 .Build();
 
             AddServices(services);
-            //ConfigureScopeTestServices(services);
+            ConfigureScopeTestServices(services);
             services.AddMvc();
             services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -56,7 +56,29 @@ namespace DotNetCore.API
             services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        //{
+        //    app.MapWhen(context => context.Request.Path.ToString().EndsWith(".report"),
+        //        appbranch =>
+        //        {
+        //            appbranch.UseMyHandler();
+        //        }); // branching pipeline
 
+        //    app.Use(async (context, next) =>
+        //    {
+        //       await next.Invoke();
+        //    }); //in line middleware
+
+        //    app.Run(async (context) =>
+        //    {
+        //        await context.Response.WriteAsync("Hello from .Net Core!");
+        //    });
+        //    app.Run(async (context) =>
+        //    {
+        //        await context.Response.WriteAsync("Never Executed");
+        //    });
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -66,7 +88,7 @@ namespace DotNetCore.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvcWithDefaultRoute();
+           app.UseMvcWithDefaultRoute();
 
             app.Run(async (context) =>
             {
@@ -104,6 +126,9 @@ namespace DotNetCore.API
             //services.AddScoped<ChildService>();
 
             // -----------------Mix case 2 - Transient inside a Singleton
+            //services.AddSingleton<ParentService1>();
+            //services.AddSingleton<ParentService2>();
+            //services.AddTransient<ChildService>();
 
             // Below runs but always will have 2 child instances
             //services.AddScoped<ParentService1>();
@@ -114,9 +139,9 @@ namespace DotNetCore.API
             // -----------------Mix case 3 - Singleton inside a Scoped
 
             //will work
-            //services.AddScoped<ParentService1>();
-            //services.AddScoped<ParentService2>();
-            //services.AddSingleton<ChildService>();
+            services.AddScoped<ParentService1>();
+            services.AddScoped<ParentService2>();
+            services.AddSingleton<ChildService>();
 
         }
     }

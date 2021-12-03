@@ -28,7 +28,7 @@ namespace DotNetCore.API.Middleware
         }
         // Middleware is always a singleton so you can't have scoped dependencies as constructor dependencies in the constructor of your middleware. 
         // Middleware supports method injection on the Invoke method,
-        // so you can just add the IUserRepository as a parameter to that method and it will be injected there and will be fine as scoped.
+        // so you can just add the IHandlesAsync as a parameter to that method and it will be injected there and will be fine as scoped.
 
         public async Task Invoke(HttpContext context, IHandlesAsync<AuthenticationQuery, AuthenticationResponse> authenticationHandler)
         {
